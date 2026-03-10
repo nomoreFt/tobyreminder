@@ -49,9 +49,9 @@
 - [ ] `AppContext.tsx` — list/reminder 도메인 Context로 분리 검토
 
 ### 불필요한 재조회 제거
-- [ ] `AppContext.tsx` — `deleteReminder()` 후 `getLists()` 재조회 → `reminderCount` 로컬 -1 업데이트로 대체
-- [ ] `AppContext.tsx` — `toggleComplete()` 후 `getLists()` 재조회 → `reminderCount` 로컬 업데이트로 대체
-- [ ] `AppContext.tsx` — `createReminder()` 후 `getLists()` 재조회 → `reminderCount` 로컬 +1 업데이트로 대체
+- [x] `AppContext.tsx` — `deleteReminder()` 후 `getLists()` 재조회 → `reminderCount` 로컬 -1 업데이트로 대체
+- [x] `AppContext.tsx` — `toggleComplete()` 후 `getLists()` 재조회 → `reminderCount` 로컬 업데이트로 대체
+- [x] `AppContext.tsx` — `createReminder()` 후 `getLists()` 재조회 → `reminderCount` 로컬 +1 업데이트로 대체
 
 ### useCallback 의존성 최적화
 - [ ] `AppContext.tsx` — `deleteList` / `deleteReminder` 의존성 배열에서 `selectedId`/`selectedReminderId` 제거 (`useRef` 또는 함수형 업데이트로 대체)

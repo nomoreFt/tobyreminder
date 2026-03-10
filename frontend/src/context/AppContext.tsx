@@ -110,14 +110,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const createReminder = useCallback(async (listId: number, data: ReminderRequest) => {
-    await api.createReminder(listId, data)
+    const created = await api.createReminder(listId, data)
     const currentId = selectedIdRef.current
     if (typeof currentId === 'number' && currentId === listId) {
-      setReminders(await api.getRemindersByList(listId))
+      setReminders(prev => [...prev, created])
     } else if (typeof currentId === 'string') {
       setReminders(await api.getRemindersByFilter(currentId as SmartFilter))
     }
-    setLists(await api.getLists())
+    setLists(prev => prev.map(l =>
+      l.id === listId ? { ...l, reminderCount: l.reminderCount + 1 } : l
+    ))
   }, [])
 
   const updateReminder = useCallback(async (id: number, data: ReminderRequest) => {
@@ -126,19 +128,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const deleteReminder = useCallback(async (id: number) => {
+    const listId = remindersRef.current.find(r => r.id === id)?.listId
     await api.deleteReminder(id)
     setReminders(prev => prev.filter(r => r.id !== id))
     setSelectedReminderId(prev => prev === id ? null : prev)
-    setLists(await api.getLists())
+    if (listId !== undefined) {
+      setLists(prev => prev.map(l =>
+        l.id === listId ? { ...l, reminderCount: Math.max(0, l.reminderCount - 1) } : l
+      ))
+    }
   }, [])
 
   const toggleComplete = useCallback(async (id: number) => {
     const snapshot = remindersRef.current.find(r => r.id === id)
+    const listId = snapshot?.listId
     setReminders(prev => prev.filter(r => r.id !== id))
     setSelectedReminderId(prev => prev === id ? null : prev)
     try {
       await api.toggleComplete(id)
-      setLists(await api.getLists())
+      if (listId !== undefined) {
+        setLists(prev => prev.map(l =>
+          l.id === listId ? { ...l, reminderCount: Math.max(0, l.reminderCount - 1) } : l
+        ))
+      }
     } catch (err) {
       if (snapshot) {
         setReminders(prev => [...prev, snapshot].sort((a, b) => a.sortOrder - b.sortOrder))
