@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useApp } from '@/context/AppContext'
 import ReminderItem from './ReminderItem'
 import type { SmartFilter } from '@/types'
@@ -14,9 +16,11 @@ const SMART_LABELS: Record<SmartFilter, { label: string; color: string }> = {
 }
 
 export default function ReminderListPanel() {
-  const { lists, reminders, selectedId, selectedReminderId, createReminder } = useApp()
+  const { lists, reminders, setReminders, selectedId, selectedReminderId, createReminder, reorderReminders } = useApp()
   const [newTitle, setNewTitle] = useState('')
   const [inputVisible, setInputVisible] = useState(false)
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
   const currentList = typeof selectedId === 'number'
     ? lists.find(l => l.id === selectedId)
@@ -45,6 +49,18 @@ export default function ReminderListPanel() {
     setInputVisible(false)
   }
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id || typeof selectedId !== 'number') return
+
+    const oldIndex = reminders.findIndex(r => r.id === active.id)
+    const newIndex = reminders.findIndex(r => r.id === over.id)
+    const reordered = arrayMove(reminders, oldIndex, newIndex)
+
+    setReminders(reordered)
+    await reorderReminders(selectedId, reordered.map(r => r.id))
+  }
+
   return (
     <div className="flex-1 flex flex-col bg-white overflow-hidden">
       {/* 헤더 */}
@@ -59,14 +75,18 @@ export default function ReminderListPanel() {
 
       {/* 리마인더 목록 */}
       <div className="flex-1 overflow-y-auto">
-        {reminders.map(reminder => (
-          <ReminderItem
-            key={reminder.id}
-            reminder={reminder}
-            list={currentList ?? lists.find(l => l.id === reminder.listId)}
-            isSelected={selectedReminderId === reminder.id}
-          />
-        ))}
+        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+          <SortableContext items={reminders.map(r => r.id)} strategy={verticalListSortingStrategy}>
+            {reminders.map(reminder => (
+              <ReminderItem
+                key={reminder.id}
+                reminder={reminder}
+                list={currentList ?? lists.find(l => l.id === reminder.listId)}
+                isSelected={selectedReminderId === reminder.id}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
 
         {/* 새 리마인더 입력 */}
         {inputVisible && typeof selectedId === 'number' && (

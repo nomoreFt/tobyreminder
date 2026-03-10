@@ -20,6 +20,8 @@ interface AppActions {
   deleteList: (id: number) => Promise<void>
   reorderLists: (ids: number[]) => Promise<void>
   selectList: (id: SelectedId) => Promise<void>
+  setLists: React.Dispatch<React.SetStateAction<ReminderList[]>>
+  setReminders: React.Dispatch<React.SetStateAction<Reminder[]>>
   createReminder: (listId: number, data: ReminderRequest) => Promise<void>
   updateReminder: (id: number, data: ReminderRequest) => Promise<void>
   deleteReminder: (id: number) => Promise<void>
@@ -118,6 +120,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <AppContext.Provider value={{
       lists, reminders, selectedId, selectedReminderId,
       fetchLists, createList, updateList, deleteList, reorderLists, selectList,
+      setLists, setReminders,
       createReminder, updateReminder, deleteReminder, toggleComplete, reorderReminders,
       selectReminder,
     }}>

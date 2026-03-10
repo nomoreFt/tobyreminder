@@ -183,17 +183,17 @@
 > 목표: 리마인더 및 목록 순서를 드래그로 변경, sortOrder 서버 동기화.
 
 ### 6-1. 패키지 설치
-- [ ] `npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities`
+- [x] `npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities`
 
 ### 6-2. 리마인더 정렬
-- [ ] `ReminderList.tsx`에 `SortableContext` + `DndContext` 적용
-- [ ] `ReminderItem.tsx`에 `useSortable` 훅 적용 (드래그 핸들 아이콘)
-- [ ] 드래그 중 고스트(ghost) 아이템 스타일 적용 (반투명)
-- [ ] 드래그 완료(`onDragEnd`) 시 로컬 상태 즉시 업데이트 (낙관적)
-- [ ] `reorderReminders(listId, newOrderIds)` 호출 → `PATCH /api/lists/{listId}/reminders/reorder`
+- [x] `ReminderList.tsx`에 `SortableContext` + `DndContext` 적용
+- [x] `ReminderItem.tsx`에 `useSortable` 훅 적용 (드래그 핸들 아이콘)
+- [x] 드래그 중 고스트(ghost) 아이템 스타일 적용 (반투명)
+- [x] 드래그 완료(`onDragEnd`) 시 로컬 상태 즉시 업데이트 (낙관적)
+- [x] `reorderReminders(listId, newOrderIds)` 호출 → `PATCH /api/lists/{listId}/reminders/reorder`
 
 ### 6-3. 목록 정렬
-- [ ] `Sidebar.tsx` 내 목록 섹션에 `SortableContext` + `DndContext` 적용
-- [ ] `ListItem.tsx`에 `useSortable` 훅 적용
-- [ ] 드래그 완료 시 로컬 상태 즉시 업데이트
-- [ ] `reorderLists(newOrderIds)` 호출 → `PATCH /api/lists/reorder`
+- [x] `Sidebar.tsx` 내 목록 섹션에 `SortableContext` + `DndContext` 적용
+- [x] `ListItem.tsx`에 `useSortable` 훅 적용
+- [x] 드래그 완료 시 로컬 상태 즉시 업데이트
+- [x] `reorderLists(newOrderIds)` 호출 → `PATCH /api/lists/reorder`

@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { useApp } from '@/context/AppContext'
 import type { ReminderList } from '@/types'
 
@@ -15,6 +17,21 @@ export default function ListItem({ list, isSelected }: ListItemProps) {
   const [editName, setEditName] = useState(list.name)
   const [hovered, setHovered] = useState(false)
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: list.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+  }
+
   const commitEdit = async () => {
     const name = editName.trim()
     if (name && name !== list.name) {
@@ -27,6 +44,8 @@ export default function ListItem({ list, isSelected }: ListItemProps) {
 
   return (
     <div
+      ref={setNodeRef}
+      style={style}
       className={`
         flex items-center gap-2 px-3 py-1.5 mx-1 rounded-lg cursor-pointer
         transition-colors group
@@ -36,6 +55,16 @@ export default function ListItem({ list, isSelected }: ListItemProps) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      {/* 드래그 핸들 */}
+      <div
+        className="text-gray-300 hover:text-gray-500 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 text-xs"
+        {...attributes}
+        {...listeners}
+        onClick={e => e.stopPropagation()}
+      >
+        ⠿
+      </div>
+
       {/* 아이콘 */}
       <div
         className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0 text-white text-xs"

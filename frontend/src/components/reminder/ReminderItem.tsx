@@ -1,5 +1,7 @@
 'use client'
 
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { useApp } from '@/context/AppContext'
 import CircleCheckbox from '@/components/ui/CircleCheckbox'
 import type { Reminder, ReminderList } from '@/types'
@@ -21,8 +23,25 @@ export default function ReminderItem({ reminder, list, isSelected }: ReminderIte
   const color = list?.color ?? '#007AFF'
   const priority = PRIORITY_ICON[reminder.priority]
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: reminder.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+  }
+
   return (
     <div
+      ref={setNodeRef}
+      style={style}
       className={`
         flex items-start gap-3 px-4 py-2.5 cursor-pointer group transition-colors
         ${isSelected ? 'bg-blue-50' : 'hover:bg-gray-50'}
@@ -30,6 +49,16 @@ export default function ReminderItem({ reminder, list, isSelected }: ReminderIte
       `}
       onClick={() => selectReminder(reminder.id)}
     >
+      {/* 드래그 핸들 */}
+      <div
+        className="pt-1 text-gray-300 hover:text-gray-500 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+        {...attributes}
+        {...listeners}
+        onClick={e => e.stopPropagation()}
+      >
+        ⠿
+      </div>
+
       <div className="pt-0.5">
         <CircleCheckbox
           checked={reminder.isCompleted}

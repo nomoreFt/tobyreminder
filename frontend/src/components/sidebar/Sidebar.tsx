@@ -1,16 +1,20 @@
 'use client'
 
 import { useState } from 'react'
+import { DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useApp } from '@/context/AppContext'
 import SmartLists from './SmartLists'
 import ListItem from './ListItem'
 import ColorPicker from '@/components/ui/ColorPicker'
 
 export default function Sidebar() {
-  const { lists, selectedId, createList } = useApp()
+  const { lists, selectedId, createList, reorderLists, setLists } = useApp()
   const [adding, setAdding] = useState(false)
   const [newName, setNewName] = useState('')
   const [newColor, setNewColor] = useState('#007AFF')
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
   const commitAdd = async () => {
     const name = newName.trim()
@@ -18,6 +22,18 @@ export default function Sidebar() {
     setNewName('')
     setNewColor('#007AFF')
     setAdding(false)
+  }
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const oldIndex = lists.findIndex(l => l.id === active.id)
+    const newIndex = lists.findIndex(l => l.id === over.id)
+    const reordered = arrayMove(lists, oldIndex, newIndex)
+
+    setLists(reordered)
+    await reorderLists(reordered.map(l => l.id))
   }
 
   return (
@@ -31,13 +47,17 @@ export default function Sidebar() {
 
       {/* 목록 */}
       <div className="flex-1 overflow-y-auto pb-2">
-        {lists.map(list => (
-          <ListItem
-            key={list.id}
-            list={list}
-            isSelected={selectedId === list.id}
-          />
-        ))}
+        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+          <SortableContext items={lists.map(l => l.id)} strategy={verticalListSortingStrategy}>
+            {lists.map(list => (
+              <ListItem
+                key={list.id}
+                list={list}
+                isSelected={selectedId === list.id}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
 
         {/* 새 목록 추가 폼 */}
         {adding && (
