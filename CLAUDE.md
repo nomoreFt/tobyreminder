@@ -54,7 +54,9 @@ src/main/kotlin/toby/ai/tobyreminder/
 - **Service 테스트는 `@SpringBootTest` 통합 테스트로 작성한다. Mock 사용 금지.**
 - 각 테스트는 `@Transactional`로 감싸 DB를 자동 롤백한다.
 - Entity 단위 테스트는 Spring Context 없이 순수 Kotlin으로 작성한다.
-- Controller 테스트는 `@WebMvcTest`를 사용한다.
+- **Controller 테스트는 `@SpringBootTest` + `MockMvc`(`webAppContextSetup`)로 작성한다.**
+  - Spring Boot 4에서 `@WebMvcTest` / `@AutoConfigureMockMvc`가 제거됨.
+  - 서비스는 `@MockitoBean`으로 교체한다.
 
 ### 스타일
 ```kotlin

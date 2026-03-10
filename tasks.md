@@ -12,19 +12,19 @@
 ### 1-1. 패키지 구조 셋업
 - [x] `domain/list/` 패키지 디렉토리 생성
 - [x] `domain/reminder/` 패키지 디렉토리 생성
-- [ ] `config/` 패키지 디렉토리 생성
+- [x] `config/` 패키지 디렉토리 생성
 
 ### 1-2. Entity & Enum
 - [x] `Priority.kt` — `NONE / LOW / MEDIUM / HIGH` enum 작성
 - [x] `ReminderList.kt` — `@Entity`, 연관관계 제거, `update()` 메서드 포함
-- [x] `Reminder.kt` — `@Entity`, `listId: Long` (연관관계 대신 ID 참조), `Priority` enum 컬럼 포함
+- [x] `Reminder.kt` — `@Entity`, `listId: Long` (연관관계 대신 ID 참조), `Priority` enum 컬럼 포함, `update()` 메서드 포함
 - [x] `ReminderListTest.kt` — 생성자/update()/createdAt 자동등록 테스트 7개 (모두 PASS)
 
 ### 1-3. DTO
 - [x] `ReminderListRequest.kt` — 생성/수정용 request DTO (name, color, icon)
 - [x] `ReminderListResponse.kt` — 응답 DTO (id, name, color, icon, sortOrder, reminderCount, createdAt)
-- [ ] `ReminderRequest.kt` — 생성/수정용 request DTO (title, notes, dueDate, dueTime, priority, isFlagged)
-- [ ] `ReminderResponse.kt` — 응답 DTO (전체 필드)
+- [x] `ReminderRequest.kt` — 생성/수정용 request DTO (title, notes, dueDate, dueTime, priority, isFlagged)
+- [x] `ReminderResponse.kt` — 응답 DTO (전체 필드)
 - [x] `ReorderRequest.kt` — 순서 변경용 DTO (`ids: List<Long>`)
 
 ### 1-4. Repository
@@ -44,40 +44,44 @@
   - [x] `updateList(id, request)` — 이름/색상/아이콘 수정
   - [x] `deleteList(id)` — 리마인더 먼저 삭제 후 목록 삭제 (Service 명시적 처리)
   - [x] `reorderLists(ids)` — sortOrder 일괄 업데이트
-- [x] `ReminderListServiceTest.kt` — 11개 테스트 (모두 PASS)
-- [ ] `ReminderService.kt`
-  - [ ] `getRemindersByList(listId)` — 목록별 조회
-  - [ ] `getByFilter(filter)` — 스마트 목록 필터 분기
-  - [ ] `createReminder(listId, request)` — 생성
-  - [ ] `updateReminder(id, request)` — 수정
-  - [ ] `toggleComplete(id)` — `isCompleted` 반전, `completedAt` 기록
-  - [ ] `deleteReminder(id)` — 삭제
-  - [ ] `reorderReminders(listId, ids)` — sortOrder 일괄 업데이트
+- [x] `ReminderListServiceTest.kt` — 14개 테스트 (모두 PASS)
+- [x] `ReminderService.kt`
+  - [x] `getRemindersByList(listId)` — 목록별 조회
+  - [x] `getByFilter(filter)` — 스마트 목록 필터 분기
+  - [x] `createReminder(listId, request)` — 생성
+  - [x] `updateReminder(id, request)` — 수정
+  - [x] `toggleComplete(id)` — `isCompleted` 반전, `completedAt` 기록
+  - [x] `deleteReminder(id)` — 삭제
+  - [x] `reorderReminders(listId, ids)` — sortOrder 일괄 업데이트
+- [x] `ReminderServiceTest.kt` — 16개 테스트 (모두 PASS)
 
 ### 1-6. Controller
-- [ ] `ReminderListController.kt`
-  - [ ] `GET /api/lists`
-  - [ ] `POST /api/lists`
-  - [ ] `PUT /api/lists/{id}`
-  - [ ] `DELETE /api/lists/{id}`
-  - [ ] `PATCH /api/lists/reorder`
-- [ ] `ReminderController.kt`
-  - [ ] `GET /api/lists/{listId}/reminders`
-  - [ ] `POST /api/lists/{listId}/reminders`
-  - [ ] `PUT /api/reminders/{id}`
-  - [ ] `PATCH /api/reminders/{id}/complete`
-  - [ ] `DELETE /api/reminders/{id}`
-  - [ ] `PATCH /api/lists/{listId}/reminders/reorder`
-  - [ ] `GET /api/reminders?filter={today|scheduled|all|flagged|completed}`
+- [x] `ReminderListController.kt`
+  - [x] `GET /api/lists`
+  - [x] `POST /api/lists`
+  - [x] `PUT /api/lists/{id}`
+  - [x] `DELETE /api/lists/{id}`
+  - [x] `PATCH /api/lists/reorder`
+- [x] `ReminderListControllerTest.kt` — 8개 테스트 (모두 PASS)
+- [x] `ReminderController.kt`
+  - [x] `GET /api/lists/{listId}/reminders`
+  - [x] `POST /api/lists/{listId}/reminders`
+  - [x] `PUT /api/reminders/{id}`
+  - [x] `PATCH /api/reminders/{id}/complete`
+  - [x] `DELETE /api/reminders/{id}`
+  - [x] `PATCH /api/lists/{listId}/reminders/reorder`
+  - [x] `GET /api/reminders?filter={today|scheduled|all|flagged|completed}`
+- [x] `ReminderControllerTest.kt` — 14개 테스트 (모두 PASS)
 
 ### 1-7. 설정
-- [ ] `WebConfig.kt` — CORS (`/api/**`, origin `http://localhost:3000`, 5개 메서드)
-- [ ] `application.properties` — Jackson 날짜 직렬화 설정 (`spring.jackson.serialization.write-dates-as-timestamps=false`)
+- [x] `WebConfig.kt` — CORS (`/api/**`, origin `http://localhost:3000`, 5개 메서드)
+- [x] `GlobalExceptionHandler.kt` — 404 (NoSuchElementException), 400 (IllegalArgumentException)
+- [x] `application.properties` — Jackson 3.x에서 날짜는 기본적으로 ISO-8601 직렬화 (별도 설정 불필요)
 
 ### 1-8. 검증
-- [ ] `./gradlew build` 통과 확인
-- [ ] curl로 목록 생성 → 조회 → 수정 → 삭제 테스트
-- [ ] curl로 리마인더 생성 → 완료 토글 → 스마트 목록 필터 테스트
+- [x] `./gradlew build` 통과 확인 (67개 테스트 전체 PASS)
+- [x] curl로 목록 생성 → 조회 → 수정 → 순서변경 → 삭제 테스트 (404 에러 처리 포함)
+- [x] curl로 리마인더 생성 → 수정 → 완료 토글 → 순서변경 → 삭제 → 스마트 목록 필터 테스트 (400/404 에러 처리 포함)
 
 ---
 

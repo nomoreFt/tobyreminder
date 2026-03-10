@@ -36,4 +36,13 @@ class Reminder(
     var sortOrder: Int = 0,
 
     val createdAt: LocalDateTime = LocalDateTime.now()
-)
+) {
+    fun update(request: ReminderRequest) {
+        title = request.title
+        notes = request.notes
+        dueDate = request.dueDate
+        dueTime = request.dueTime
+        priority = request.priority ?: Priority.NONE
+        isFlagged = request.isFlagged ?: false
+    }
+}

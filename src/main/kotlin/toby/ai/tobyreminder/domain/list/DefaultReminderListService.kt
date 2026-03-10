@@ -26,8 +26,8 @@ class DefaultReminderListService(
             .maxOfOrNull { it.sortOrder } ?: -1
         val list = ReminderList(
             name = request.name,
-            color = request.color,
-            icon = request.icon,
+            color = request.color ?: "#007AFF",
+            icon = request.icon ?: "list.bullet",
             sortOrder = maxSortOrder + 1
         )
         val saved = reminderListRepository.save(list)
@@ -38,7 +38,7 @@ class DefaultReminderListService(
     override fun updateList(id: Long, request: ReminderListRequest): ReminderListResponse {
         val list = reminderListRepository.findById(id)
             .orElseThrow { NoSuchElementException("목록을 찾을 수 없습니다: $id") }
-        list.update(name = request.name, color = request.color, icon = request.icon)
+        list.update(name = request.name, color = request.color ?: list.color, icon = request.icon ?: list.icon)
         return ReminderListResponse.from(list)
     }
 

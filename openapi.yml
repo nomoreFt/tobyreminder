@@ -1,0 +1,508 @@
+openapi: 3.0.3
+info:
+  title: TobyReminder API
+  description: Apple Reminders 웹 클론 REST API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: ReminderList
+    description: 리마인더 목록 관리
+  - name: Reminder
+    description: 리마인더 관리
+
+paths:
+  /api/lists:
+    get:
+      tags: [ReminderList]
+      summary: 전체 목록 조회
+      description: sortOrder 오름차순으로 정렬된 모든 리마인더 목록을 반환합니다.
+      operationId: getLists
+      responses:
+        '200':
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReminderListResponse'
+              example:
+                - id: 1
+                  name: 개인
+                  color: "#007AFF"
+                  icon: list.bullet
+                  sortOrder: 0
+                  reminderCount: 3
+                  createdAt: "2026-03-10T12:00:00"
+
+    post:
+      tags: [ReminderList]
+      summary: 목록 생성
+      description: 새 리마인더 목록을 생성합니다. sortOrder는 자동으로 현재 최대값 + 1로 설정됩니다.
+      operationId: createList
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderListRequest'
+            example:
+              name: 개인
+              color: "#FF3B30"
+              icon: list.bullet
+      responses:
+        '201':
+          description: 생성 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderListResponse'
+        '400':
+          description: 잘못된 요청 (name 누락 등)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/lists/{id}:
+    put:
+      tags: [ReminderList]
+      summary: 목록 수정
+      description: 리마인더 목록의 이름, 색상, 아이콘을 수정합니다.
+      operationId: updateList
+      parameters:
+        - $ref: '#/components/parameters/ListId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderListRequest'
+      responses:
+        '200':
+          description: 수정 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderListResponse'
+        '404':
+          description: 목록을 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [ReminderList]
+      summary: 목록 삭제
+      description: 리마인더 목록과 소속된 모든 리마인더를 삭제합니다.
+      operationId: deleteList
+      parameters:
+        - $ref: '#/components/parameters/ListId'
+      responses:
+        '204':
+          description: 삭제 성공
+        '404':
+          description: 목록을 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/lists/reorder:
+    patch:
+      tags: [ReminderList]
+      summary: 목록 순서 변경
+      description: 전달된 id 배열의 순서대로 sortOrder를 0부터 재할당합니다.
+      operationId: reorderLists
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderRequest'
+            example:
+              ids: [3, 1, 2]
+      responses:
+        '204':
+          description: 순서 변경 성공
+        '404':
+          description: 포함된 id 중 존재하지 않는 목록이 있음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/lists/{listId}/reminders:
+    get:
+      tags: [Reminder]
+      summary: 목록별 리마인더 조회
+      description: 특정 목록에 속한 미완료 리마인더를 sortOrder 오름차순으로 반환합니다.
+      operationId: getRemindersByList
+      parameters:
+        - $ref: '#/components/parameters/ListIdInPath'
+      responses:
+        '200':
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReminderResponse'
+        '404':
+          description: 목록을 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags: [Reminder]
+      summary: 리마인더 생성
+      description: 특정 목록에 리마인더를 생성합니다.
+      operationId: createReminder
+      parameters:
+        - $ref: '#/components/parameters/ListIdInPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderRequest'
+            example:
+              title: 장보기
+              dueDate: "2026-03-11"
+      responses:
+        '201':
+          description: 생성 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderResponse'
+        '404':
+          description: 목록을 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/lists/{listId}/reminders/reorder:
+    patch:
+      tags: [Reminder]
+      summary: 리마인더 순서 변경
+      description: 특정 목록 내 리마인더를 전달된 id 배열 순서대로 재정렬합니다.
+      operationId: reorderReminders
+      parameters:
+        - $ref: '#/components/parameters/ListIdInPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderRequest'
+      responses:
+        '204':
+          description: 순서 변경 성공
+        '404':
+          description: 목록 또는 리마인더를 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/reminders:
+    get:
+      tags: [Reminder]
+      summary: 스마트 목록 조회
+      description: 필터 조건에 맞는 리마인더를 반환합니다.
+      operationId: getRemindersByFilter
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [today, scheduled, all, flagged, completed]
+          description: |
+            - `today`: 오늘 마감이고 미완료인 리마인더
+            - `scheduled`: 마감일이 있고 미완료인 리마인더
+            - `all`: 미완료 리마인더 전체
+            - `flagged`: 플래그가 있고 미완료인 리마인더
+            - `completed`: 완료된 리마인더 전체
+      responses:
+        '200':
+          description: 조회 성공
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReminderResponse'
+        '400':
+          description: 유효하지 않은 filter 값
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/reminders/{id}:
+    put:
+      tags: [Reminder]
+      summary: 리마인더 수정
+      description: 리마인더의 내용을 수정합니다.
+      operationId: updateReminder
+      parameters:
+        - $ref: '#/components/parameters/ReminderId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderRequest'
+      responses:
+        '200':
+          description: 수정 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderResponse'
+        '404':
+          description: 리마인더를 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags: [Reminder]
+      summary: 리마인더 삭제
+      operationId: deleteReminder
+      parameters:
+        - $ref: '#/components/parameters/ReminderId'
+      responses:
+        '204':
+          description: 삭제 성공
+        '404':
+          description: 리마인더를 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/reminders/{id}/complete:
+    patch:
+      tags: [Reminder]
+      summary: 완료 토글
+      description: 리마인더의 완료 상태를 반전시킵니다. 완료 시 completedAt이 기록됩니다.
+      operationId: toggleComplete
+      parameters:
+        - $ref: '#/components/parameters/ReminderId'
+      responses:
+        '200':
+          description: 토글 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderResponse'
+        '404':
+          description: 리마인더를 찾을 수 없음
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  parameters:
+    ListId:
+      name: id
+      in: path
+      required: true
+      description: 리마인더 목록 ID
+      schema:
+        type: integer
+        format: int64
+        example: 1
+
+    ListIdInPath:
+      name: listId
+      in: path
+      required: true
+      description: 리마인더 목록 ID
+      schema:
+        type: integer
+        format: int64
+        example: 1
+
+    ReminderId:
+      name: id
+      in: path
+      required: true
+      description: 리마인더 ID
+      schema:
+        type: integer
+        format: int64
+        example: 1
+
+  schemas:
+    ReminderListRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          description: 목록 이름
+          example: 개인
+        color:
+          type: string
+          description: 목록 색상 (HEX)
+          default: "#007AFF"
+          example: "#FF3B30"
+        icon:
+          type: string
+          description: 목록 아이콘
+          default: list.bullet
+          example: briefcase
+
+    ReminderListResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: 개인
+        color:
+          type: string
+          example: "#FF3B30"
+        icon:
+          type: string
+          example: list.bullet
+        sortOrder:
+          type: integer
+          example: 0
+        reminderCount:
+          type: integer
+          description: 미완료 리마인더 수
+          example: 3
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-03-10T12:00:00"
+
+    ReminderRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          example: 장보기
+        notes:
+          type: string
+          nullable: true
+          example: 우유, 달걀
+        dueDate:
+          type: string
+          format: date
+          nullable: true
+          example: "2026-03-11"
+        dueTime:
+          type: string
+          format: time
+          nullable: true
+          example: "09:00:00"
+        priority:
+          $ref: '#/components/schemas/Priority'
+        isFlagged:
+          type: boolean
+          default: false
+
+    ReminderResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        listId:
+          type: integer
+          format: int64
+          example: 1
+        title:
+          type: string
+          example: 장보기
+        notes:
+          type: string
+          nullable: true
+        dueDate:
+          type: string
+          format: date
+          nullable: true
+          example: "2026-03-11"
+        dueTime:
+          type: string
+          format: time
+          nullable: true
+          example: "09:00:00"
+        priority:
+          $ref: '#/components/schemas/Priority'
+        isFlagged:
+          type: boolean
+        isCompleted:
+          type: boolean
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    ReorderRequest:
+      type: object
+      required: [ids]
+      properties:
+        ids:
+          type: array
+          description: 변경할 순서대로 정렬된 ID 배열
+          items:
+            type: integer
+            format: int64
+          example: [3, 1, 2]
+
+    Priority:
+      type: string
+      enum: [NONE, LOW, MEDIUM, HIGH]
+      default: NONE
+      description: |
+        - `NONE`: 우선순위 없음
+        - `LOW`: 낮음 (파랑 `!`)
+        - `MEDIUM`: 보통 (주황 `!!`)
+        - `HIGH`: 높음 (빨강 `!!!`)
+
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          example: 404
+        error:
+          type: string
+          example: Not Found
+        message:
+          type: string
+          example: "목록을 찾을 수 없습니다: 999"
+        path:
+          type: string
+          example: /api/lists/999
