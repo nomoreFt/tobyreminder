@@ -23,10 +23,10 @@
 ## 🟠 단기 수정 (에러 처리 / 안정성)
 
 ### 백엔드 예외 처리
-- [ ] `GlobalExceptionHandler.kt` — `DataIntegrityViolationException` 핸들러 추가 (→ 400)
-- [ ] `GlobalExceptionHandler.kt` — `HttpMessageNotReadableException` 핸들러 추가 (→ 400)
-- [ ] `GlobalExceptionHandler.kt` — 제네릭 `Exception` fallback 핸들러 추가 (→ 500)
-- [ ] `GlobalExceptionHandler.kt` — 예외 발생 시 서버 로그 기록 추가
+- [x] `GlobalExceptionHandler.kt` — `DataIntegrityViolationException` 핸들러 추가 (→ 400)
+- [x] `GlobalExceptionHandler.kt` — `HttpMessageNotReadableException` 핸들러 추가 (→ 400)
+- [x] `GlobalExceptionHandler.kt` — 제네릭 `Exception` fallback 핸들러 추가 (→ 500)
+- [x] `GlobalExceptionHandler.kt` — 예외 발생 시 서버 로그 기록 추가
 
 ### 프론트엔드 에러 처리
 - [ ] `AppContext.tsx` — 모든 async useCallback에 try/catch 추가
