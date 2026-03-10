@@ -2,6 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useRef, useState } from 'react'
 import * as api from '@/lib/api'
+import { isSmartFilter } from '@/types'
 import type { Reminder, ReminderList, ReminderListRequest, ReminderRequest, SmartFilter } from '@/types'
 
 type SelectedId = number | SmartFilter | null
@@ -104,8 +105,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setReminders([])
     } else if (typeof id === 'number') {
       setReminders(await api.getRemindersByList(id))
-    } else {
-      setReminders(await api.getRemindersByFilter(id as SmartFilter))
+    } else if (isSmartFilter(id)) {
+      setReminders(await api.getRemindersByFilter(id))
     }
   }, [])
 
@@ -114,8 +115,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const currentId = selectedIdRef.current
     if (typeof currentId === 'number' && currentId === listId) {
       setReminders(prev => [...prev, created])
-    } else if (typeof currentId === 'string') {
-      setReminders(await api.getRemindersByFilter(currentId as SmartFilter))
+    } else if (isSmartFilter(currentId)) {
+      setReminders(await api.getRemindersByFilter(currentId))
     }
     setLists(prev => prev.map(l =>
       l.id === listId ? { ...l, reminderCount: l.reminderCount + 1 } : l

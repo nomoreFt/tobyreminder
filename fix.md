@@ -54,11 +54,11 @@
 - [x] `AppContext.tsx` — `createReminder()` 후 `getLists()` 재조회 → `reminderCount` 로컬 +1 업데이트로 대체
 
 ### useCallback 의존성 최적화
-- [ ] `AppContext.tsx` — `deleteList` / `deleteReminder` 의존성 배열에서 `selectedId`/`selectedReminderId` 제거 (`useRef` 또는 함수형 업데이트로 대체)
+- [x] `AppContext.tsx` — `deleteList` / `deleteReminder` 의존성 배열에서 `selectedId`/`selectedReminderId` 제거 (`useRef` 또는 함수형 업데이트로 대체)
 
 ### 타입 안전성
-- [ ] `types/index.ts` — `SelectedId` 타입 재설계: `number | SmartFilter | null`에서 `SmartFilter`를 string literal union으로 명확히 분리
-- [ ] `AppContext.tsx` — `as SmartFilter` 캐스팅 제거, 타입 가드 함수로 대체
+- [x] `types/index.ts` — `isSmartFilter` 타입 가드 함수 추가
+- [x] `AppContext.tsx` — `as SmartFilter` 캐스팅 제거, `isSmartFilter` 타입 가드로 대체
 
 ### 중복 코드
 - [ ] `domain/list/ReorderRequest.kt`, `domain/reminder/ReorderRequest.kt` — 공통 위치로 통합 또는 단일 파일로 병합

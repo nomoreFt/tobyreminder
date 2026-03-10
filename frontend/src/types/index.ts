@@ -2,6 +2,10 @@ export type Priority = 'NONE' | 'LOW' | 'MEDIUM' | 'HIGH'
 
 export type SmartFilter = 'today' | 'scheduled' | 'all' | 'flagged' | 'completed'
 
+const SMART_FILTERS: readonly SmartFilter[] = ['today', 'scheduled', 'all', 'flagged', 'completed']
+export const isSmartFilter = (v: unknown): v is SmartFilter =>
+  typeof v === 'string' && (SMART_FILTERS as readonly string[]).includes(v)
+
 export interface ReminderList {
   id: number
   name: string
