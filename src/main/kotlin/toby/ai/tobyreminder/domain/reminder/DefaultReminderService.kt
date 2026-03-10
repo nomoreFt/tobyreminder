@@ -85,8 +85,11 @@ class DefaultReminderService(
         reminderListRepository.findById(listId)
             .orElseThrow { NoSuchElementException("목록을 찾을 수 없습니다: $listId") }
         val reminders = reminderRepository.findByListIdOrderBySortOrderAsc(listId).associateBy { it.id }
+        if (request.ids.size != reminders.size)
+            throw IllegalArgumentException("IDs 수(${request.ids.size})가 목록의 리마인더 수(${reminders.size})와 다릅니다")
         request.ids.forEachIndexed { index, id ->
-            val reminder = reminders[id] ?: throw NoSuchElementException("리마인더를 찾을 수 없습니다: $id")
+            val reminder = reminders[id]
+                ?: throw IllegalArgumentException("reminder $id 는 목록 $listId 에 속하지 않습니다")
             reminder.sortOrder = index
         }
     }

@@ -306,5 +306,31 @@ class ReminderServiceTest {
                 service.reorderReminders(9999L, ReorderRequest(ids = listOf(1L)))
             }.isInstanceOf(NoSuchElementException::class.java)
         }
+
+        @Test
+        @DisplayName("전달된 IDs 수가 목록의 리마인더 수와 다르면 예외를 던진다")
+        fun `throws when ids count differs from actual reminder count`() {
+            val list = saveList()
+            val r1 = saveReminder(list.id, "A")
+            val r2 = saveReminder(list.id, "B")
+            saveReminder(list.id, "C")  // 3개인데 2개만 전달
+
+            assertThatThrownBy {
+                service.reorderReminders(list.id, ReorderRequest(ids = listOf(r1.id, r2.id)))
+            }.isInstanceOf(IllegalArgumentException::class.java)
+        }
+
+        @Test
+        @DisplayName("다른 목록 소속의 reminder id를 포함하면 예외를 던진다")
+        fun `throws when ids contain reminder from different list`() {
+            val list1 = saveList("목록1")
+            val list2 = saveList("목록2")
+            val r1 = saveReminder(list1.id, "A")
+            val r2 = saveReminder(list2.id, "B")  // 다른 목록 소속
+
+            assertThatThrownBy {
+                service.reorderReminders(list1.id, ReorderRequest(ids = listOf(r1.id, r2.id)))
+            }.isInstanceOf(IllegalArgumentException::class.java)
+        }
     }
 }
