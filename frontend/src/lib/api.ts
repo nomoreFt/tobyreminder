@@ -1,18 +1,27 @@
 import type { Reminder, ReminderList, ReminderListRequest, ReminderRequest, SmartFilter } from '@/types'
 
-const BASE = 'http://localhost:8080'
+const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080'
+const TIMEOUT_MS = 10_000
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    ...init,
-  })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: res.statusText }))
-    throw new Error(err.message ?? res.statusText)
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS)
+
+  try {
+    const res = await fetch(`${BASE}${path}`, {
+      headers: { 'Content-Type': 'application/json' },
+      ...init,
+      signal: controller.signal,
+    })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ message: res.statusText }))
+      throw new Error(err.message ?? res.statusText)
+    }
+    if (res.status === 204) return undefined as T
+    return res.json()
+  } finally {
+    clearTimeout(timer)
   }
-  if (res.status === 204) return undefined as T
-  return res.json()
 }
 
 // ReminderList

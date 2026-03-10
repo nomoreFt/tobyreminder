@@ -31,8 +31,8 @@
 ### 프론트엔드 에러 처리
 - [ ] `AppContext.tsx` — 모든 async useCallback에 try/catch 추가
 - [ ] `AppContext.tsx` — API 실패 시 사용자에게 토스트/알림 피드백 표시
-- [ ] `api.ts` — fetch 요청에 timeout 설정 (AbortController)
-- [ ] `page.tsx` — React Error Boundary 추가
+- [x] `api.ts` — fetch 요청에 timeout 설정 (AbortController)
+- [x] `page.tsx` — React Error Boundary 추가
 
 ### 입력 검증
 - [x] `ReminderRequest.kt` — `@NotBlank(title)`, `@Size(max=...)` Bean Validation 추가
