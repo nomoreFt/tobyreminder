@@ -129,7 +129,7 @@
 ### 2-7. 메인 & 상세 컴포넌트 (정적)
 - [ ] `src/components/reminder/ReminderItem.tsx` — CircleCheckbox + 제목 + 마감일 + 우선순위/플래그 아이콘
 - [ ] `src/components/reminder/ReminderList.tsx` — 헤더(목록 이름 + 색상) + ReminderItem 목록 + 새 항목 입력 행
-- [ ] `src/components/reminder/DetailPanel.tsx` — 제목/메모 입력, 마감일 datepicker, 우선순위 선택, 플래그 토글
+- [x] `src/components/reminder/DetailPanel.tsx` — 제목/메모 입력, 마감일 datepicker, 우선순위 선택, 플래그 토글
 
 ---
 
@@ -137,12 +137,12 @@
 
 > 목표: 사이드바 목록이 실제 API와 연동.
 
-- [ ] 앱 초기 로드 시 `fetchLists()` 호출 → 사이드바 렌더링
-- [ ] 스마트 목록 카드 배지 숫자 API 연동 (미완료 리마인더 수)
-- [ ] "목록 추가" 클릭 → 인라인 이름 입력 + ColorPicker → `createList()` 호출
-- [ ] 목록 이름 더블클릭 → 인라인 편집 모드 → blur/Enter 시 `updateList()` 호출
-- [ ] 목록 hover 시 삭제 버튼 노출 → 클릭 시 확인 없이 `deleteList()` 호출
-- [ ] 목록 선택 시 `selectedListId` 업데이트 → 중앙 패널 전환
+- [x] 앱 초기 로드 시 `fetchLists()` 호출 → 사이드바 렌더링
+- [x] 스마트 목록 카드 배지 숫자 API 연동 (전체 미완료 리마인더 수, `reminderCount` 합산)
+- [x] "목록 추가" 클릭 → 인라인 이름 입력 + ColorPicker → `createList()` 호출
+- [x] 목록 이름 더블클릭 → 인라인 편집 모드 → blur/Enter 시 `updateList()` 호출
+- [x] 목록 hover 시 삭제 버튼 노출 → 클릭 시 확인 없이 `deleteList()` 호출
+- [x] 목록 선택 시 `selectedListId` 업데이트 → 중앙 패널 전환
 
 ---
 
@@ -150,16 +150,16 @@
 
 > 목표: 리마인더 추가/수정/삭제/완료가 실제 API와 연동.
 
-- [ ] 목록 선택 → `fetchReminders(listId)` → ReminderItem 렌더링
-- [ ] 목록 하단 빈 영역 클릭 또는 `+` 버튼 → 인라인 입력 행 표시 → Enter 시 `createReminder()` 호출
-- [ ] ReminderItem 클릭 → `selectedReminderId` 업데이트 → DetailPanel 슬라이드 인
-- [ ] DetailPanel 제목 편집 → blur 시 `updateReminder()` 호출
-- [ ] DetailPanel 메모 편집 → blur 시 `updateReminder()` 호출
-- [ ] DetailPanel 마감일 변경 → `updateReminder()` 호출
-- [ ] DetailPanel 우선순위 선택 → `updateReminder()` 호출
-- [ ] DetailPanel 플래그 토글 → `updateReminder()` 호출
-- [ ] CircleCheckbox 클릭 → 낙관적으로 즉시 목록에서 제거 → `toggleComplete()` 호출
-- [ ] ReminderItem hover 시 삭제 버튼 노출 → `deleteReminder()` 호출
+- [x] 목록 선택 → `fetchReminders(listId)` → ReminderItem 렌더링
+- [x] 목록 하단 빈 영역 클릭 또는 `+` 버튼 → 인라인 입력 행 표시 → Enter 시 `createReminder()` 호출
+- [x] ReminderItem 클릭 → `selectedReminderId` 업데이트 → DetailPanel 슬라이드 인
+- [x] DetailPanel 제목 편집 → blur 시 `updateReminder()` 호출
+- [x] DetailPanel 메모 편집 → blur 시 `updateReminder()` 호출
+- [x] DetailPanel 마감일 변경 → `updateReminder()` 호출
+- [x] DetailPanel 우선순위 선택 → `updateReminder()` 호출
+- [x] DetailPanel 플래그 토글 → `updateReminder()` 호출
+- [x] CircleCheckbox 클릭 → 낙관적으로 즉시 목록에서 제거 → `toggleComplete()` 호출
+- [x] ReminderItem hover 시 삭제 버튼 노출 → `deleteReminder()` 호출
 
 ---
 
@@ -167,14 +167,14 @@
 
 > 목표: 사이드바 상단 카드 클릭 시 필터된 리마인더 표시.
 
-- [ ] 오늘 카드 클릭 → `getRemindersByFilter('today')` → 중앙 패널 렌더링
-- [ ] 예정 카드 클릭 → `getRemindersByFilter('scheduled')`
-- [ ] 전체 카드 클릭 → `getRemindersByFilter('all')`
-- [ ] 플래그됨 카드 클릭 → `getRemindersByFilter('flagged')`
-- [ ] 완료됨 카드 클릭 → `getRemindersByFilter('completed')` → 목록 이름 그룹 헤더로 구분 표시
-- [ ] 스마트 목록 뷰에서도 CircleCheckbox 완료 토글 동작
-- [ ] 스마트 목록 뷰에서도 DetailPanel 편집 동작
-- [ ] 스마트 목록 뷰 헤더에 필터 이름 + 아이콘 표시
+- [x] 오늘 카드 클릭 → `getRemindersByFilter('today')` → 중앙 패널 렌더링
+- [x] 예정 카드 클릭 → `getRemindersByFilter('scheduled')`
+- [x] 전체 카드 클릭 → `getRemindersByFilter('all')`
+- [x] 플래그됨 카드 클릭 → `getRemindersByFilter('flagged')`
+- [x] 완료됨 카드 클릭 → `getRemindersByFilter('completed')` → 헤더에 필터 이름 표시
+- [x] 스마트 목록 뷰에서도 CircleCheckbox 완료 토글 동작
+- [x] 스마트 목록 뷰에서도 DetailPanel 편집 동작
+- [x] 스마트 목록 뷰 헤더에 필터 이름 + 색상 표시
 
 ---
 
