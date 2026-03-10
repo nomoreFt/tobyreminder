@@ -7,9 +7,9 @@
 ## 🔴 즉시 수정 (버그 / 데이터 손상 위험)
 
 ### 낙관적 업데이트 롤백
-- [ ] `AppContext.tsx` — `toggleComplete()`: API 실패 시 제거한 reminder를 상태에 복원
-- [ ] `Sidebar.tsx` — `handleDragEnd()`: reorderLists API 실패 시 lists 순서 원복
-- [ ] `ReminderList.tsx` — `handleDragEnd()`: reorderReminders API 실패 시 reminders 순서 원복
+- [x] `AppContext.tsx` — `toggleComplete()`: API 실패 시 제거한 reminder를 상태에 복원
+- [x] `Sidebar.tsx` — `handleDragEnd()`: reorderLists API 실패 시 lists 순서 원복
+- [x] `ReminderList.tsx` — `handleDragEnd()`: reorderReminders API 실패 시 reminders 순서 원복
 
 ### 데이터 무결성
 - [x] `DefaultReminderService.kt` — `reorderReminders()`: 전달된 reminder IDs가 실제 해당 listId 소속인지 검증 추가

@@ -16,7 +16,7 @@ const SMART_LABELS: Record<SmartFilter, { label: string; color: string }> = {
 }
 
 export default function ReminderListPanel() {
-  const { lists, reminders, setReminders, selectedId, selectedReminderId, createReminder, reorderReminders } = useApp()
+  const { lists, reminders, selectedId, selectedReminderId, createReminder, reorderReminders } = useApp()
   const [newTitle, setNewTitle] = useState('')
   const [inputVisible, setInputVisible] = useState(false)
 
@@ -55,10 +55,13 @@ export default function ReminderListPanel() {
 
     const oldIndex = reminders.findIndex(r => r.id === active.id)
     const newIndex = reminders.findIndex(r => r.id === over.id)
-    const reordered = arrayMove(reminders, oldIndex, newIndex)
+    const newOrderIds = arrayMove(reminders, oldIndex, newIndex).map(r => r.id)
 
-    setReminders(reordered)
-    await reorderReminders(selectedId, reordered.map(r => r.id))
+    try {
+      await reorderReminders(selectedId, newOrderIds)
+    } catch {
+      // reorderReminders 내부에서 롤백 처리됨
+    }
   }
 
   return (

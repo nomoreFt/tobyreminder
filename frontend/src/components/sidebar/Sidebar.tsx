@@ -9,7 +9,7 @@ import ListItem from './ListItem'
 import ColorPicker from '@/components/ui/ColorPicker'
 
 export default function Sidebar() {
-  const { lists, selectedId, createList, reorderLists, setLists } = useApp()
+  const { lists, selectedId, createList, reorderLists } = useApp()
   const [adding, setAdding] = useState(false)
   const [newName, setNewName] = useState('')
   const [newColor, setNewColor] = useState('#007AFF')
@@ -30,10 +30,13 @@ export default function Sidebar() {
 
     const oldIndex = lists.findIndex(l => l.id === active.id)
     const newIndex = lists.findIndex(l => l.id === over.id)
-    const reordered = arrayMove(lists, oldIndex, newIndex)
+    const newOrderIds = arrayMove(lists, oldIndex, newIndex).map(l => l.id)
 
-    setLists(reordered)
-    await reorderLists(reordered.map(l => l.id))
+    try {
+      await reorderLists(newOrderIds)
+    } catch {
+      // reorderLists 내부에서 롤백 처리됨
+    }
   }
 
   return (

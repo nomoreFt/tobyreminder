@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useCallback, useContext, useState } from 'react'
+import React, { createContext, useCallback, useContext, useRef, useState } from 'react'
 import * as api from '@/lib/api'
 import type { Reminder, ReminderList, ReminderListRequest, ReminderRequest, SmartFilter } from '@/types'
 
@@ -20,8 +20,6 @@ interface AppActions {
   deleteList: (id: number) => Promise<void>
   reorderLists: (ids: number[]) => Promise<void>
   selectList: (id: SelectedId) => Promise<void>
-  setLists: React.Dispatch<React.SetStateAction<ReminderList[]>>
-  setReminders: React.Dispatch<React.SetStateAction<Reminder[]>>
   createReminder: (listId: number, data: ReminderRequest) => Promise<void>
   updateReminder: (id: number, data: ReminderRequest) => Promise<void>
   deleteReminder: (id: number) => Promise<void>
@@ -37,6 +35,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [reminders, setReminders] = useState<Reminder[]>([])
   const [selectedId, setSelectedId] = useState<SelectedId>(null)
   const [selectedReminderId, setSelectedReminderId] = useState<number | null>(null)
+
+  // 롤백용 최신 상태 참조
+  const listsRef = useRef(lists)
+  listsRef.current = lists
+  const remindersRef = useRef(reminders)
+  remindersRef.current = reminders
+  const selectedIdRef = useRef(selectedId)
+  selectedIdRef.current = selectedId
 
   const fetchLists = useCallback(async () => {
     setLists(await api.getLists())
@@ -55,15 +61,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const deleteList = useCallback(async (id: number) => {
     await api.deleteList(id)
     setLists(await api.getLists())
-    if (selectedId === id) {
-      setSelectedId(null)
-      setReminders([])
-    }
-  }, [selectedId])
+    setSelectedId(prev => {
+      if (prev === id) {
+        setReminders([])
+        return null
+      }
+      return prev
+    })
+  }, [])
 
   const reorderLists = useCallback(async (ids: number[]) => {
-    await api.reorderLists(ids)
-    setLists(await api.getLists())
+    const snapshot = listsRef.current
+    const reordered = ids.map(id => snapshot.find(l => l.id === id)!).filter(Boolean)
+    setLists(reordered)
+    try {
+      await api.reorderLists(ids)
+    } catch (err) {
+      setLists(snapshot)
+      throw err
+    }
   }, [])
 
   const selectList = useCallback(async (id: SelectedId) => {
@@ -80,13 +96,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const createReminder = useCallback(async (listId: number, data: ReminderRequest) => {
     await api.createReminder(listId, data)
-    if (typeof selectedId === 'number' && selectedId === listId) {
+    const currentId = selectedIdRef.current
+    if (typeof currentId === 'number' && currentId === listId) {
       setReminders(await api.getRemindersByList(listId))
-    } else if (typeof selectedId === 'string') {
-      setReminders(await api.getRemindersByFilter(selectedId as SmartFilter))
+    } else if (typeof currentId === 'string') {
+      setReminders(await api.getRemindersByFilter(currentId as SmartFilter))
     }
     setLists(await api.getLists())
-  }, [selectedId])
+  }, [])
 
   const updateReminder = useCallback(async (id: number, data: ReminderRequest) => {
     const updated = await api.updateReminder(id, data)
@@ -96,20 +113,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const deleteReminder = useCallback(async (id: number) => {
     await api.deleteReminder(id)
     setReminders(prev => prev.filter(r => r.id !== id))
-    if (selectedReminderId === id) setSelectedReminderId(null)
+    setSelectedReminderId(prev => prev === id ? null : prev)
     setLists(await api.getLists())
-  }, [selectedReminderId])
+  }, [])
 
   const toggleComplete = useCallback(async (id: number) => {
-    // 낙관적 업데이트: 즉시 목록에서 제거
+    const snapshot = remindersRef.current.find(r => r.id === id)
     setReminders(prev => prev.filter(r => r.id !== id))
-    if (selectedReminderId === id) setSelectedReminderId(null)
-    await api.toggleComplete(id)
-    setLists(await api.getLists())
-  }, [selectedReminderId])
+    setSelectedReminderId(prev => prev === id ? null : prev)
+    try {
+      await api.toggleComplete(id)
+      setLists(await api.getLists())
+    } catch (err) {
+      if (snapshot) {
+        setReminders(prev => [...prev, snapshot].sort((a, b) => a.sortOrder - b.sortOrder))
+      }
+      throw err
+    }
+  }, [])
 
   const reorderReminders = useCallback(async (listId: number, ids: number[]) => {
-    await api.reorderReminders(listId, ids)
+    const snapshot = remindersRef.current
+    const reordered = ids.map(id => snapshot.find(r => r.id === id)!).filter(Boolean)
+    setReminders(reordered)
+    try {
+      await api.reorderReminders(listId, ids)
+    } catch (err) {
+      setReminders(snapshot)
+      throw err
+    }
   }, [])
 
   const selectReminder = useCallback((id: number | null) => {
@@ -120,7 +152,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <AppContext.Provider value={{
       lists, reminders, selectedId, selectedReminderId,
       fetchLists, createList, updateList, deleteList, reorderLists, selectList,
-      setLists, setReminders,
       createReminder, updateReminder, deleteReminder, toggleComplete, reorderReminders,
       selectReminder,
     }}>
