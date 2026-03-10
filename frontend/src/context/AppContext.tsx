@@ -6,11 +6,18 @@ import type { Reminder, ReminderList, ReminderListRequest, ReminderRequest, Smar
 
 type SelectedId = number | SmartFilter | null
 
+export interface SmartCounts {
+  today: number
+  scheduled: number
+  flagged: number
+}
+
 interface AppState {
   lists: ReminderList[]
   reminders: Reminder[]
   selectedId: SelectedId
   selectedReminderId: number | null
+  smartCounts: SmartCounts
 }
 
 interface AppActions {
@@ -35,6 +42,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [reminders, setReminders] = useState<Reminder[]>([])
   const [selectedId, setSelectedId] = useState<SelectedId>(null)
   const [selectedReminderId, setSelectedReminderId] = useState<number | null>(null)
+  const [smartCounts, setSmartCounts] = useState<SmartCounts>({ today: 0, scheduled: 0, flagged: 0 })
 
   // 롤백용 최신 상태 참조
   const listsRef = useRef(lists)
@@ -45,7 +53,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   selectedIdRef.current = selectedId
 
   const fetchLists = useCallback(async () => {
-    setLists(await api.getLists())
+    const [lists, todayRes, scheduledRes, flaggedRes] = await Promise.all([
+      api.getLists(),
+      api.getRemindersByFilter('today'),
+      api.getRemindersByFilter('scheduled'),
+      api.getRemindersByFilter('flagged'),
+    ])
+    setLists(lists)
+    setSmartCounts({ today: todayRes.length, scheduled: scheduledRes.length, flagged: flaggedRes.length })
   }, [])
 
   const createList = useCallback(async (data: ReminderListRequest) => {
@@ -150,7 +165,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AppContext.Provider value={{
-      lists, reminders, selectedId, selectedReminderId,
+      lists, reminders, selectedId, selectedReminderId, smartCounts,
       fetchLists, createList, updateList, deleteList, reorderLists, selectList,
       createReminder, updateReminder, deleteReminder, toggleComplete, reorderReminders,
       selectReminder,

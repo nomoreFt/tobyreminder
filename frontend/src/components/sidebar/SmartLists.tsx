@@ -11,14 +11,13 @@ const SMART_ITEMS: { filter: SmartFilter; label: string; icon: string; color: st
 ]
 
 export default function SmartLists() {
-  const { lists, selectedId, selectList } = useApp()
+  const { lists, selectedId, selectList, smartCounts } = useApp()
 
-  const todayCount = 0 // Phase 5에서 API로 연동
   const counts: Record<SmartFilter, number> = {
-    today:     todayCount,
-    scheduled: 0,
+    today:     smartCounts.today,
+    scheduled: smartCounts.scheduled,
     all:       lists.reduce((sum, l) => sum + l.reminderCount, 0),
-    flagged:   0,
+    flagged:   smartCounts.flagged,
     completed: 0,
   }
 

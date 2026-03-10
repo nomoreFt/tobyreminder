@@ -16,7 +16,7 @@
 - [x] `DefaultReminderService.kt` — `reorderReminders()`: 전달된 IDs 수가 실제 목록 크기와 일치하는지 검증
 
 ### 누락 구현
-- [ ] `SmartLists.tsx` — 오늘/예정/플래그됨 배지 숫자를 실제 API 데이터로 연동 (현재 하드코딩 0)
+- [x] `SmartLists.tsx` — 오늘/예정/플래그됨 배지 숫자를 실제 API 데이터로 연동 (현재 하드코딩 0)
 
 ---
 

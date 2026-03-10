@@ -28,6 +28,7 @@ describe('AppContext', () => {
     vi.clearAllMocks()
     vi.mocked(api.getLists).mockResolvedValue([mockList])
     vi.mocked(api.getRemindersByList).mockResolvedValue([mockReminder(1), mockReminder(2)])
+    vi.mocked(api.getRemindersByFilter).mockResolvedValue([])
   })
 
   describe('toggleComplete()', () => {
