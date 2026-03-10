@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -25,6 +26,15 @@ class GlobalExceptionHandler {
         log.warn("Bad request: ${e.message}")
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ErrorResponse(status = 400, message = e.message ?: "Bad Request"))
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidation(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
+        val message = e.bindingResult.fieldErrors
+            .joinToString(", ") { "${it.field}: ${it.defaultMessage}" }
+        log.warn("Validation failed: $message")
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ErrorResponse(status = 400, message = message))
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)

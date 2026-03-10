@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -25,7 +26,7 @@ class ReminderController(
     @ResponseStatus(HttpStatus.CREATED)
     fun createReminder(
         @PathVariable listId: Long,
-        @RequestBody request: ReminderRequest
+        @Valid @RequestBody request: ReminderRequest
     ): ReminderResponse =
         reminderService.createReminder(listId, request)
 
@@ -43,7 +44,7 @@ class ReminderController(
     @PutMapping("/api/reminders/{id}")
     fun updateReminder(
         @PathVariable id: Long,
-        @RequestBody request: ReminderRequest
+        @Valid @RequestBody request: ReminderRequest
     ): ReminderResponse =
         reminderService.updateReminder(id, request)
 

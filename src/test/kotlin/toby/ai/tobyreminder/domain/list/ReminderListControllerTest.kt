@@ -179,4 +179,27 @@ class ReminderListControllerTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("입력 검증")
+    inner class Validation {
+
+        @Test
+        @DisplayName("POST: name이 빈 문자열이면 400을 반환한다")
+        fun `returns 400 when name is blank on create`() {
+            mockMvc.post("/api/lists") {
+                contentType = MediaType.APPLICATION_JSON
+                content = """{"name": ""}"""
+            }.andExpect { status { isBadRequest() } }
+        }
+
+        @Test
+        @DisplayName("PUT: name이 공백만이면 400을 반환한다")
+        fun `returns 400 when name is whitespace on update`() {
+            mockMvc.put("/api/lists/1") {
+                contentType = MediaType.APPLICATION_JSON
+                content = """{"name": "   "}"""
+            }.andExpect { status { isBadRequest() } }
+        }
+    }
 }

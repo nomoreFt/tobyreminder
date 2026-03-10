@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -24,13 +25,13 @@ class ReminderListController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createList(@RequestBody request: ReminderListRequest): ReminderListResponse =
+    fun createList(@Valid @RequestBody request: ReminderListRequest): ReminderListResponse =
         reminderListService.createList(request)
 
     @PutMapping("/{id}")
     fun updateList(
         @PathVariable id: Long,
-        @RequestBody request: ReminderListRequest
+        @Valid @RequestBody request: ReminderListRequest
     ): ReminderListResponse =
         reminderListService.updateList(id, request)
 

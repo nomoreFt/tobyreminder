@@ -35,10 +35,10 @@
 - [ ] `page.tsx` — React Error Boundary 추가
 
 ### 입력 검증
-- [ ] `ReminderRequest.kt` — `@NotBlank(title)`, `@Size(max=...)` Bean Validation 추가
-- [ ] `ReminderListRequest.kt` — `@NotBlank(name)` Bean Validation 추가
-- [ ] `ReminderListController.kt`, `ReminderController.kt` — `@Valid` 어노테이션 적용
-- [ ] `GlobalExceptionHandler.kt` — `MethodArgumentNotValidException` 핸들러 추가 (→ 400)
+- [x] `ReminderRequest.kt` — `@NotBlank(title)`, `@Size(max=...)` Bean Validation 추가
+- [x] `ReminderListRequest.kt` — `@NotBlank(name)` Bean Validation 추가
+- [x] `ReminderListController.kt`, `ReminderController.kt` — `@Valid` 어노테이션 적용
+- [x] `GlobalExceptionHandler.kt` — `MethodArgumentNotValidException` 핸들러 추가 (→ 400)
 
 ---
 
