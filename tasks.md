@@ -10,39 +10,41 @@
 > 목표: DB 스키마 + REST API 골격 완성. curl로 동작 확인.
 
 ### 1-1. 패키지 구조 셋업
-- [ ] `domain/list/` 패키지 디렉토리 생성
-- [ ] `domain/reminder/` 패키지 디렉토리 생성
+- [x] `domain/list/` 패키지 디렉토리 생성
+- [x] `domain/reminder/` 패키지 디렉토리 생성
 - [ ] `config/` 패키지 디렉토리 생성
 
 ### 1-2. Entity & Enum
-- [ ] `Priority.kt` — `NONE / LOW / MEDIUM / HIGH` enum 작성
-- [ ] `ReminderList.kt` — `@Entity`, `@OneToMany(cascade=ALL, orphanRemoval=true)` 포함
-- [ ] `Reminder.kt` — `@Entity`, `@ManyToOne`, `Priority` enum 컬럼 포함
+- [x] `Priority.kt` — `NONE / LOW / MEDIUM / HIGH` enum 작성
+- [x] `ReminderList.kt` — `@Entity`, 연관관계 제거, `update()` 메서드 포함
+- [x] `Reminder.kt` — `@Entity`, `listId: Long` (연관관계 대신 ID 참조), `Priority` enum 컬럼 포함
+- [x] `ReminderListTest.kt` — 생성자/update()/createdAt 자동등록 테스트 7개 (모두 PASS)
 
 ### 1-3. DTO
-- [ ] `ReminderListRequest.kt` — 생성/수정용 request DTO (name, color, icon, sortOrder)
-- [ ] `ReminderListResponse.kt` — 응답 DTO (id, name, color, icon, sortOrder, reminderCount)
+- [x] `ReminderListRequest.kt` — 생성/수정용 request DTO (name, color, icon)
+- [x] `ReminderListResponse.kt` — 응답 DTO (id, name, color, icon, sortOrder, reminderCount, createdAt)
 - [ ] `ReminderRequest.kt` — 생성/수정용 request DTO (title, notes, dueDate, dueTime, priority, isFlagged)
 - [ ] `ReminderResponse.kt` — 응답 DTO (전체 필드)
-- [ ] `ReorderRequest.kt` — 순서 변경용 DTO (`ids: List<Long>`)
+- [x] `ReorderRequest.kt` — 순서 변경용 DTO (`ids: List<Long>`)
 
 ### 1-4. Repository
-- [ ] `ReminderListRepository.kt` — `JpaRepository<ReminderList, Long>`, `findAllByOrderBySortOrderAsc()`
-- [ ] `ReminderRepository.kt` — 기본 CRUD + 스마트 목록 쿼리 메서드
-  - [ ] `findByListIdAndIsCompletedFalseOrderBySortOrderAsc(listId)`
-  - [ ] `findByDueDateAndIsCompletedFalse(date)` — Today
-  - [ ] `findByDueDateIsNotNullAndIsCompletedFalse()` — Scheduled
-  - [ ] `findByIsCompletedFalse()` — All
-  - [ ] `findByIsFlaggedTrueAndIsCompletedFalse()` — Flagged
-  - [ ] `findByIsCompletedTrue()` — Completed
+- [x] `ReminderListRepository.kt` — `JpaRepository<ReminderList, Long>`, `findAllByOrderBySortOrderAsc()`
+- [x] `ReminderRepository.kt` — 기본 CRUD + 스마트 목록 쿼리 메서드
+  - [x] `findByListIdAndIsCompletedFalseOrderBySortOrderAsc(listId)`
+  - [x] `findByDueDateAndIsCompletedFalse(date)` — Today
+  - [x] `findByDueDateIsNotNullAndIsCompletedFalse()` — Scheduled
+  - [x] `findByIsCompletedFalse()` — All
+  - [x] `findByIsFlaggedTrueAndIsCompletedFalse()` — Flagged
+  - [x] `findByIsCompletedTrue()` — Completed
 
 ### 1-5. Service
-- [ ] `ReminderListService.kt`
-  - [ ] `getLists()` — 전체 목록 조회
-  - [ ] `createList(request)` — 생성, sortOrder = 현재 max + 1
-  - [ ] `updateList(id, request)` — 이름/색상/아이콘 수정
-  - [ ] `deleteList(id)` — 삭제 (cascade로 리마인더 함께 삭제)
-  - [ ] `reorderLists(ids)` — sortOrder 일괄 업데이트
+- [x] `ReminderListService.kt`
+  - [x] `getLists()` — 전체 목록 조회
+  - [x] `createList(request)` — 생성, sortOrder = 현재 max + 1
+  - [x] `updateList(id, request)` — 이름/색상/아이콘 수정
+  - [x] `deleteList(id)` — 리마인더 먼저 삭제 후 목록 삭제 (Service 명시적 처리)
+  - [x] `reorderLists(ids)` — sortOrder 일괄 업데이트
+- [x] `ReminderListServiceTest.kt` — 11개 테스트 (모두 PASS)
 - [ ] `ReminderService.kt`
   - [ ] `getRemindersByList(listId)` — 목록별 조회
   - [ ] `getByFilter(filter)` — 스마트 목록 필터 분기
